@@ -3,10 +3,9 @@
 # DO NOT USE ' IN THIS CONFIG
 
 #' empty skeleton config
-#' 
-#' @return compiled string
+#'
 #' @noRd
-
+#' @return compiled string
 skeleton_config <- function(){
 paste0(c('
 ######################################

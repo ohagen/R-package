@@ -18,15 +18,28 @@ apply_evolution <- function(species, cluster_indices, landscape, config){
   stop("this function documents the user function interface only, do not use it")
 }
 
-
-loop_evolution <- function(config, data, vars){
-  if(config$gen3sis$general$verbose>=3){
+#' @importFrom parallel mclapply
+loop_evolution <- function(config, data, vars, n_cores = NULL) {
+  if (config$gen3sis$general$verbose >= 3) {
     cat(paste("entering mutation module \n"))
   }
 
-  data$all_species <- lapply(data$all_species, evolve, data$landscape, data$distance, config)
+  if (!is.null(n_cores) && .Platform$OS.type == "unix") {
+    data$all_species <- mclapply(
+      data$all_species,
+      evolve,
+      data$landscape, data$distance, config,
+      mc.cores = n_cores
+    )
+  } else {
+    data$all_species <- lapply(
+      data$all_species,
+      evolve,
+      data$landscape, data$distance, config
+    )
+  }
 
-  if(config$gen3sis$general$verbose>=3){
+  if (config$gen3sis$general$verbose >= 3) {
     cat(paste("exiting mutation module \n"))
   }
   return(list(config = config, data = data, vars = vars))

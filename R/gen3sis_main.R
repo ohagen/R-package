@@ -67,6 +67,7 @@ NULL
 #' If a number "X", call call_observer at x time-steps equally spaced between start and end steps. 
 #' For example, on a simulation with start time of 1 and end time of 20, call_observer=1 calls the observer function at time-steps 1, 11 and 20.
 #' @param enable_gc enable gc in case of memory shortages
+#' @param n_cores the number of cores to use
 #' @param verbose integer value (i.e. 0, 1 ,2 or 3). 
 #' If verbose=0, no printed statement.
 #' If verbose=1 (default), print time-step progress.
@@ -87,6 +88,7 @@ run_simulation <- function(config = NA,
                           save_state = NA,
                           call_observer = "all",
                           enable_gc = FALSE,
+                          n_cores = NULL,
                           verbose = 1){
   
   #----------------------------------------------------#
@@ -212,7 +214,7 @@ run_simulation <- function(config = NA,
     if(verbose>=2){
       cat("dispersal \n")
     }
-    val <- loop_dispersal(val$config, val$data, val$vars)
+    val <- loop_dispersal(val$config, val$data, val$vars, n_cores)
 
 
     #     #----------------------------------------------------------#
@@ -221,7 +223,7 @@ run_simulation <- function(config = NA,
     if(verbose>=2){
       cat("evolution \n")
     }
-    val <- loop_evolution(val$config, val$data, val$vars)
+    val <- loop_evolution(val$config, val$data, val$vars, n_cores)
     
     #     #--------------------------------------------------------#
     #     ######## loop ecology                              #######

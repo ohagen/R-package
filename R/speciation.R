@@ -58,7 +58,6 @@ loop_speciation <- function(config, data, vars, n_cores = NULL) {
       speciate,
       config, data$landscape, data$distance_matrix
     )
-
   }
 
   n_new_sp_ti_total <- sum(sapply(speciation_list, function(x) x$n_new_sp))

@@ -242,12 +242,17 @@ create_empty_config <- function(){
 #' @details This function conducts the final checks and settings before the simulations runs.
 #' currently these include setting the random seed and adding a dispersal trait if not done by the user
 #' @param config the current config for this simulation run
+#' @param rng_kind kind of the RNG in use, NULL for the default
 #' @noRd
-complete_config <- function(config) {
+complete_config <- function(config, rng_kind = NULL) {
   # random seed
   seed <- config[["gen3sis"]][["general"]][["random_seed"]]
-  if( !is.null(seed) && !is.na(seed) ) {
-    set.seed(seed)
+  if (!is.null(seed) && !is.na(seed)) {
+    if (!is.null(rng_kind)) {
+      set.seed(seed, rng_kind)
+    } else {
+      set.seed(seed)
+    }
   }
 
   # dispersal trait

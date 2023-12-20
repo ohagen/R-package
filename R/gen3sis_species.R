@@ -152,7 +152,7 @@ disperse_species <- function(species, source, destination, config){
 #' @noRd
 limit_species_to_cells <- function(species, cells) {
   limited_cells <- names(species[["abundance"]])
-  limited_cells <- limited_cells[which(limited_cells %in% cells)]
+  limited_cells <- limited_cells[limited_cells %in% cells]
 
   species[["abundance"]] <- species[["abundance"]][limited_cells]
   species[["traits"]] <- species[["traits"]][limited_cells, , drop=FALSE]

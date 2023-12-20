@@ -120,7 +120,12 @@ run_simulation <- function(config = NA,
               "vars" = list(),
               "config" = config)
 
-  val$config <- complete_config(val$config)
+  if (!is.null(n_cores)) {
+    ## Ensure reproducibility when using parallelization
+    val$config <- complete_config(val$config, rng_kind = "L'Ecuyer-CMRG")
+  } else {
+    val$config <- complete_config(val$config)
+  }
 
   val$config$gen3sis$general$verbose <- verbose
 
@@ -201,7 +206,7 @@ run_simulation <- function(config = NA,
     if(verbose>=2){
       cat("speciation \n")
     }
-    val <- loop_speciation(val$config, val$data, val$vars)
+    val <- loop_speciation(val$config, val$data, val$vars, n_cores)
 
     # updates to take into account new species
     val <- update1.n_sp.all_geo_sp_ti(val$config, val$data, val$vars)

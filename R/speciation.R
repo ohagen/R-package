@@ -43,8 +43,6 @@ loop_speciation <- function(config, data, vars, n_cores = NULL) {
     cat(paste("entering speciation module \n"))
   }
 
-  ## TODO: maybe it is not necessary that the `speciate` function
-  ## returns both the "new" and "old" state of the species
   if (!is.null(n_cores) && .Platform$OS.type == "unix") {
     speciation_list <- mclapply(
       data$all_species,
@@ -188,11 +186,6 @@ speciate <- function(species, config, landscape, distance_matrix) {
     permutation <- sample(seq_along(species_presence))
     clu_geo_spi_ti <- Tdbscan_variable(
       distance_matrix[
-        ## NOTE: if sites are always in the same order (not completely
-        ## sure about this), maybe it would be possible to select rows
-        ## and columns using only "permutation" here, without having
-        ## to select first from the "species_presence" character
-        ## vector
         species_presence[permutation],
         species_presence[permutation],
         drop = FALSE

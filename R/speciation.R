@@ -33,22 +33,22 @@ get_divergence_factor <- function(species, cluster_indices, landscape, config){
 #' @param config the current config object
 #' @param data the current data object
 #' @param vars the current vars object
-#' @param n_cores the number of cores to use
+#' @param cluster a PSOCK cluster as returned by makeCluster()
 #'
 #' @return an expanded species list including all newly created species
-#' @importFrom parallel mclapply
+#' @importFrom parallel parLapply
 #' @noRd
-loop_speciation <- function(config, data, vars, n_cores = NULL) {
+loop_speciation <- function(config, data, vars, cluster = NULL) {
   if (config$gen3sis$general$verbose >= 3) {
     cat(paste("entering speciation module \n"))
   }
 
-  if (!is.null(n_cores) && .Platform$OS.type == "unix") {
-    speciation_list <- mclapply(
+  if (!is.null(cluster)) {
+    speciation_list <- parLapply(
+      cluster,
       data$all_species,
       speciate,
-      config, data$landscape, data$distance_matrix,
-      mc.cores = n_cores
+      config, data$landscape, data$distance_matrix
     )
   } else {
     speciation_list <- lapply(

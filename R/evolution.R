@@ -18,18 +18,18 @@ apply_evolution <- function(species, cluster_indices, landscape, config){
   stop("this function documents the user function interface only, do not use it")
 }
 
-#' @importFrom parallel mclapply
-loop_evolution <- function(config, data, vars, n_cores = NULL) {
+#' @importFrom parallel parLapply
+loop_evolution <- function(config, data, vars, cluster = NULL) {
   if (config$gen3sis$general$verbose >= 3) {
     cat(paste("entering mutation module \n"))
   }
 
-  if (!is.null(n_cores) && .Platform$OS.type == "unix") {
-    data$all_species <- mclapply(
+  if (!is.null(cluster)) {
+    data$all_species <- parLapply(
+      cluster,
       data$all_species,
       evolve,
-      data$landscape, data$distance, config,
-      mc.cores = n_cores
+      data$landscape, data$distance, config
     )
   } else {
     data$all_species <- lapply(

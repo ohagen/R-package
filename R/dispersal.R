@@ -37,23 +37,22 @@ get_dispersal_values <- function(num_draws, species, landscape, config) {
 #' @param config config object
 #' @param data general data container
 #' @param vars general variables container
-#' @param n_cores the number of cores to use
+#' @param cluster a PSOCK cluster as returned by makeCluster()
 #'
 #' @return returns the standard val(config, data, vars) list
-#' @importFrom parallel mclapply
+#' @importFrom parallel parLapply
 #' @noRd
-loop_dispersal <- function(config, data, vars, n_cores = NULL) {
+loop_dispersal <- function(config, data, vars, cluster = NULL) {
   if (config$gen3sis$general$verbose >= 3) {
     cat(paste("entering dispersal module\n"))
   }
 
-  ## TODO: use "parLapply" on Windows
-  if (!is.null(n_cores) && .Platform$OS.type == "unix") {
-    data$all_species <- mclapply(
+  if (!is.null(cluster)) {
+    data$all_species <- parLapply(
+      cluster,
       data$all_species,
       disperse,
-      data$landscape, data$distance_matrix, config,
-      mc.cores = n_cores
+      data$landscape, data$distance_matrix, config
     )
   } else {
     data$all_species <- lapply(

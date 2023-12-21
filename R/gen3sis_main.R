@@ -41,6 +41,7 @@
 #' @docType package
 #' @useDynLib gen3sis, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
+#' @importFrom parallel makeCluster stopCluster
 #' @import Matrix
 NULL
 
@@ -121,9 +122,12 @@ run_simulation <- function(config = NA,
               "config" = config)
 
   if (!is.null(n_cores)) {
+    cl <- makeCluster(n_cores)
+    on.exit(stopCluster(cl))
     ## Ensure reproducibility when using parallelization
     val$config <- complete_config(val$config, rng_kind = "L'Ecuyer-CMRG")
   } else {
+    cl <- NULL
     val$config <- complete_config(val$config)
   }
 
@@ -206,7 +210,7 @@ run_simulation <- function(config = NA,
     if(verbose>=2){
       cat("speciation \n")
     }
-    val <- loop_speciation(val$config, val$data, val$vars, n_cores)
+    val <- loop_speciation(val$config, val$data, val$vars, cl)
 
     # updates to take into account new species
     val <- update1.n_sp.all_geo_sp_ti(val$config, val$data, val$vars)
@@ -219,7 +223,7 @@ run_simulation <- function(config = NA,
     if(verbose>=2){
       cat("dispersal \n")
     }
-    val <- loop_dispersal(val$config, val$data, val$vars, n_cores)
+    val <- loop_dispersal(val$config, val$data, val$vars, cl)
 
 
     #     #----------------------------------------------------------#
@@ -228,7 +232,7 @@ run_simulation <- function(config = NA,
     if(verbose>=2){
       cat("evolution \n")
     }
-    val <- loop_evolution(val$config, val$data, val$vars, n_cores)
+    val <- loop_evolution(val$config, val$data, val$vars, cl)
     
     #     #--------------------------------------------------------#
     #     ######## loop ecology                              #######

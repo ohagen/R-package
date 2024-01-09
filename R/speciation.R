@@ -33,7 +33,7 @@ get_divergence_factor <- function(species, cluster_indices, landscape, config){
 #' @param config the current config object
 #' @param data the current data object
 #' @param vars the current vars object
-#' @param cluster a PSOCK cluster as returned by makeCluster()
+#' @param cluster a PSOCK cluster as returned by parallel::makeCluster()
 #'
 #' @return an expanded species list including all newly created species
 #' @importFrom parallel parLapply
@@ -163,7 +163,7 @@ loop_speciation <- function(config, data, vars, cluster = NULL) {
 ##' @noRd
 speciate <- function(species, config, landscape, distance_matrix) {
   ## Check if the species is alive
-  if (!length(species[["abundance"]])) {
+  if (!length(species$abundance)) {
     return(
       list(
         parent = species,
@@ -174,7 +174,7 @@ speciate <- function(species, config, landscape, distance_matrix) {
   }
 
   # define occupied cells by species
-  species_presence <- names(species[["abundance"]])
+  species_presence <- names(species$abundance)
 
   ## calling RCPP function to define physical clusters
   if (length(species_presence) == 1) { # check if only one cell is occupied

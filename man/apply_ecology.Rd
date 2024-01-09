@@ -25,8 +25,8 @@ Allows the user to define the ecological consequences for species within each si
 defining thus species survival and abundance
 }
 \details{
-The arguments of the function allows to apply abiotic and biotic ecological rules to species in each 
-site. Based on those rules, the function updates the abundance of each species in each site. If the abundance 
+The arguments of the function allows to apply abiotic and biotic ecological rules to species in each
+site. Based on those rules, the function updates the abundance of each species in each site. If the abundance
 is null, the species is absent or extinct. Ecology can account for local environmental conditions, the abundance of
 species, and/or their traits.
 }

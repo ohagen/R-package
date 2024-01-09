@@ -125,6 +125,7 @@ run_simulation <- function(config = NA,
     cl <- makeCluster(n_cores)
     on.exit(stopCluster(cl))
     ## Ensure reproducibility when using parallelization
+    ## TODO: make this work with makeCluster()/parLapply()
     val$config <- complete_config(val$config, rng_kind = "L'Ecuyer-CMRG")
   } else {
     cl <- NULL
@@ -240,7 +241,7 @@ run_simulation <- function(config = NA,
     if(verbose>=2){
       cat("ecology \n")
     }
-    val <- loop_ecology(val$config, val$data, val$vars)
+    val <- loop_ecology(val$config, val$data, val$vars, cl)
     
     # #     #-------------------------------------------------------------------#
     # #     ######## end of time-step loop variable update (simulation.R) #######

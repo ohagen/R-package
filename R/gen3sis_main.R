@@ -124,9 +124,9 @@ run_simulation <- function(config = NA,
   if (!is.null(n_cores)) {
     cl <- makeCluster(n_cores)
     on.exit(stopCluster(cl))
-    ## Ensure reproducibility when using parallelization
-    ## TODO: make this work with makeCluster()/parLapply()
-    val$config <- complete_config(val$config, rng_kind = "L'Ecuyer-CMRG")
+    ## Ensure some reproducibility when using parallelization (the
+    ## results also depend on the number of parallel workers)
+    val$config <- complete_config(val$config, cluster = cl)
   } else {
     cl <- NULL
     val$config <- complete_config(val$config)

@@ -68,7 +68,7 @@ loop_ecology <- function(config, data, vars, cluster = NULL) {
   richness <- rowSums(abund_matrix > 0)
   sites_with_excess <- occupied_cells[richness > max_n_sp_idi]
   if (length(sites_with_excess) > 0) {
-    vars$flag <- "max_number_of_coexisting_species"
+    vars$flag <- "max_number_coexisting_species"
     ## Print only the first site that exceeds the maximum number of
     ## co-occurring species
     paste0(

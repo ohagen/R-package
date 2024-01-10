@@ -63,6 +63,23 @@ loop_ecology <- function(config, data, vars, cluster = NULL) {
   # Take ids that have at least one species
   occupied_cells <- rownames(abund_matrix)[rowSums(abund_matrix) > 0]
 
+  ## Check if the maximum number of species per cell has been exceeded
+  max_n_sp_idi <- config$gen3sis$general$max_number_of_coexisting_species
+  richness <- rowSums(abund_matrix > 0)
+  sites_with_excess <- occupied_cells[richness > max_n_sp_idi]
+  if (length(sites_with_excess) > 0) {
+    vars$flag <- "max_number_of_coexisting_species"
+    ## Print only the first site that exceeds the maximum number of
+    ## co-occurring species
+    paste0(
+      "Maximum number of species per cell reached. Specifically ",
+      richness[richness > max_n_sp_idi][1], "(>", max_n_sp_idi,
+      ") species @ t", vars$ti,
+      " site id ", sites_with_excess[1]
+    )
+    return(list(config = config, data = data, vars = vars))
+  }
+
   ## Get environment and species (abundance, traits) information for
   ## all occupied sites
   sites_with_info <- lapply(
@@ -89,23 +106,6 @@ loop_ecology <- function(config, data, vars, cluster = NULL) {
   ## an abundance matrix of the occupied sites, not a global matrix.
   new_abund_matrix <- do.call(cbind, new_abund_matrix)
   colnames(new_abund_matrix) <- occupied_cells
-
-  ## Check if the maximum number of species per cell has been exceeded
-  max_n_sp_idi <- config$gen3sis$general$max_number_of_coexisting_species
-  richness <- colSums(new_abund_matrix > 0)
-  sites_with_excess <- occupied_cells[richness > max_n_sp_idi]
-  if (length(sites_with_excess) > 0) {
-    vars$flag <- "max_number_of_coexisting_species"
-    ## Print only the first site that exceeds the maximum number of
-    ## co-occurring species
-    paste0(
-      "Maximum number of species per cell reached. Specifically ",
-      richness[richness > max_n_sp_idi][1], "(>", max_n_sp_idi,
-      ") species @ t", vars$ti,
-      " site id ", sites_with_excess[1]
-    )
-    return(list(config = config, data = data, vars = vars))
-  }
 
   ## Update abundances in the list of all species
   for (spi in seq_len(nrow(new_abund_matrix))) {

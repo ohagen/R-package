@@ -200,6 +200,6 @@ update_site_abundances <- function(site_with_info, n_sp_total, config) {
   )
 
   new_abd_site <- numeric(n_sp_total)
-  new_abd_site[as.integer(names(new_abd))] <- new_abd
+  new_abd_site[as.integer(names(site_with_info$abundance))] <- new_abd
   new_abd_site
 }

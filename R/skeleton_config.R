@@ -4,10 +4,11 @@
 
 #' empty skeleton config
 #'
-#' @noRd
 #' @return compiled string
-skeleton_config <- function(){
-paste0(c('
+#' @noRd
+
+skeleton_config <- function() {
+  paste0(c('
 ######################################
 ###            METADATA            ###
 ######################################
@@ -15,8 +16,7 @@ paste0(c('
 #
 # Version: 1.0
 #
-# Author:
-#', paste0("# Date: ", format(Sys.Date(), format="%d.%m.%Y")),                          
+# Author:\n#', paste0("# Date: ", format(Sys.Date(), format="%d.%m.%Y")),
 '#
 # Landscape:
 #

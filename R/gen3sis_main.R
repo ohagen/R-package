@@ -123,7 +123,7 @@ run_simulation <- function(config = NA,
 
   if (!is.null(n_cores)) {
     cl <- makeCluster(n_cores)
-    on.exit(stopCluster(cl))
+    on.exit(stopCluster(cl), add = TRUE)
     ## Ensure some reproducibility when using parallelization (the
     ## results also depend on the number of parallel workers)
     val$config <- complete_config(val$config, cluster = cl)

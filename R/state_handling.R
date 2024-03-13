@@ -2,27 +2,36 @@
 
 #' Internal function that saves the current simulation state
 #'
-#' @param val the internal state
-#' @param save_val a tri-state flag: NA to not save, "all" to save the current state,
-#' "last" to remove any previous save state after saving the current state
+#' @param val The internal state.
+#' @param save_state This parameter can take any of the following
+#'   values:
 #'
+#' * FALSE (default): do not save any internal state of the
+#'   simulation.
+#'
+#' * "all": save all time steps.
+#'
+#' * Numeric vector: save the specified time steps.
+#' @param last_state_only Logical. If TRUE, keep only the last saved
+#'   state. If FALSE, keep all saved states.
 #' @noRd
-save_val <- function(val, save_val = NA){
-  ### save current simulation state
-  #save the !!global!! state of the rng
-  if(is.na(save_val)){
-    #save_val not set: don't save anything
-    return()
-  } else if(save_val == "all"){
+save_val <- function(val, save_state = FALSE, last_state_only = TRUE) {
+  create_save <- identical(save_state, "all") || val$vars$ti %in% save_state
+
+  if (create_save) {
+    state_dir <- val$config$directories$output_val
+    if (!dir.exists(state_dir)) {
+      dir.create(state_dir, recursive = TRUE)
+    }
+    prev_files <- list.files(state_dir, full.names = TRUE)
+    # Save current RNG state
     val$config$seed <- .GlobalEnv$.Random.seed
     val$data$distance_matrix <- NULL
-    saveRDS(object = val, file = file.path(val$config$directories$output_val, paste0("val_t_", val$vars$ti, ".rds")))
-  } else if(save_val == "last"){
-    files <- list.files(val$config$directories$output_val, full.names = TRUE)
-    val$config$seed <- .GlobalEnv$.Random.seed
-    val$data$distance_matrix <- NULL
-    saveRDS(object = val, file = file.path(val$config$directories$output_val, paste0("val_t_", val$vars$ti, ".rds")))
-    file.remove(files)
+    state_file <- file.path(state_dir, paste0("val_t_", val$vars$ti, ".rds"))
+    saveRDS(val, state_file)
+    if (last_state_only) {
+      file.remove(prev_files)
+    }
   }
 }
 

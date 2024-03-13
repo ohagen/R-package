@@ -74,7 +74,7 @@ prepare_directories <- function(config_file = NA,
   #dir.create(dir$output_landscapes, recursive=TRUE, showWarnings = FALSE)
   dir$output_plots <- file.path(dir$output, "plots")
   dir.create(dir$output_plots, recursive=TRUE, showWarnings = FALSE)
-  #dir$output_val <- file.path(dir$output, "val")
+  dir$output_val <- file.path(dir$output, "val")
   #dir.create(dir$output_val, recursive=TRUE, showWarnings = FALSE)
 
   return(dir)

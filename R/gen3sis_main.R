@@ -56,11 +56,19 @@ NULL
 #' If timestep_restart=NA (default), start at the oldest available landscape. 
 #' If timestep_restart="ti", start from the last available time-step. 
 #' If a number "x", start at time-step x (e.g. timestep_restartstart=6)
-#' @param save_state save the internal state of the simulation for restarts.
-#' If save_state=NA (default), do not save any internal state of the simulation.
-#' If save_state="all", save all time-step. 
-#' If save_state="last", saves only last time-step.
-#' If a vector, saves the desired time-steps (e.g. save_state=c(1,3,5))
+#' @param save_state save the internal simulation state in the
+#'   specified time steps for restarts. If \code{FALSE} (default), do
+#'   not save any internal state of the simulation. If \code{"all"},
+#'   create a save each time step (keep in mind this can take a while
+#'   depending on the simulation). If a numeric vector, saves the
+#'   specified time-steps (e.g. \code{save_state = c(0, 5, 10)}). If
+#'   any internal state saves are created, only the last one will be
+#'   kept by default, this can be changed using the
+#'   \code{last_state_only} option.
+#' @param last_state_only whether to remove older state objects from
+#'   other time steps that were already created. By default, they will
+#'   be deleted and only the last state will be kept in order to save
+#'   disk space. Set this variable to \code{FALSE} to keep all saves.
 #' @param call_observer call observer functions.
 #' If call_observer="all" (default), call all time-steps.
 #' If call_observer=NA, calls the start and end times.
@@ -84,7 +92,8 @@ run_simulation <- function(config = NA,
                           landscape = NA,
                           output_directory = NA, 
                           timestep_restart = NA,
-                          save_state = NA,
+                          save_state = FALSE,
+                          last_state_only = TRUE,
                           call_observer = "all",
                           enable_gc = FALSE,
                           verbose = 1){
@@ -259,7 +268,7 @@ run_simulation <- function(config = NA,
     
     val <- update_summary_statistics(val$data, val$vars, val$config)
     
-    save_val(val, save_state)
+    save_val(val, save_state, last_state_only)
     
     # abort conditions
     if( val$vars$n_sp_alive >= val$config$gen3sis$general$max_number_of_species ) {

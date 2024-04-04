@@ -6,30 +6,36 @@
 #' @param save_state This parameter can take any of the following
 #'   values:
 #'
-#' * FALSE (default): do not save any internal state of the
-#'   simulation.
+#' * NA (default): do not save any internal state of the simulation.
 #'
 #' * "all": save all time steps.
 #'
+#' * "last": save last time step only
+#'
 #' * Numeric vector: save the specified time steps.
-#' @param last_state_only Logical. If TRUE, keep only the last saved
-#'   state. If FALSE, keep all saved states.
 #' @noRd
-save_val <- function(val, save_state = FALSE, last_state_only = TRUE) {
-  create_save <- identical(save_state, "all") || val$vars$ti %in% save_state
+save_val <- function(val, save_state = NA) {
+  create_save <- identical(save_state, "all") ||
+    identical(save_state, "last") ||
+    val$vars$ti %in% save_state
 
   if (create_save) {
     state_dir <- val$config$directories$output_val
     if (!dir.exists(state_dir)) {
       dir.create(state_dir, recursive = TRUE)
     }
-    prev_files <- list.files(state_dir, full.names = TRUE)
+
+    if (identical(save_state, "last")) {
+      # Previous state file(s) will be removed after the most recent
+      # one has been created
+      prev_files <- list.files(state_dir, full.names = TRUE)
+    }
     # Save current RNG state
     val$config$seed <- .GlobalEnv$.Random.seed
     val$data$distance_matrix <- NULL
     state_file <- file.path(state_dir, paste0("val_t_", val$vars$ti, ".rds"))
     saveRDS(val, state_file)
-    if (last_state_only) {
+    if (identical(save_state, "last")) {
       file.remove(prev_files)
     }
   }

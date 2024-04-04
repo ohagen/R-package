@@ -20,7 +20,7 @@ save_val <- function(val, save_state = NA) {
     val$vars$ti %in% save_state
 
   if (create_save) {
-    state_dir <- val$config$directories$output_val
+    state_dir <- file.path(val$config$directories$output, "val")
     if (!dir.exists(state_dir)) {
       dir.create(state_dir, recursive = TRUE)
     }
@@ -73,10 +73,11 @@ save_ecogengeo <- function(val){
 restore_state <- function(val, restart_timestep){
   ### val contains a populated config, required for directory information
   ### restore previous simulation state
+  state_dir <- file.path(val$config$directories$output, "val")
   if(restart_timestep == "ti"){
     #look for the most recent completed time-step
     regex <- "\\d+"
-    files <- list.files(val$config$directories$output_val)
+    files <- list.files(state_dir)
     if(length(files) == 0){
       print("no val found, starting from the initial time-step")
       return(val)
@@ -88,7 +89,7 @@ restore_state <- function(val, restart_timestep){
     timestep <- as.integer(restart_timestep)
   }
 
-  val <- readRDS(file.path(val$config$directories$output_val, paste0("val_t_", timestep, ".rds")))
+  val <- readRDS(file.path(state_dir, paste0("val_t_", timestep, ".rds")))
   .GlobalEnv$.Random.seed <- val$config$seed
 
   if(timestep > 0){

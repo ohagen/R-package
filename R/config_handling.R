@@ -68,14 +68,8 @@ prepare_directories <- function(config_file = NA,
   dir.create(dir$output, recursive=TRUE, showWarnings = FALSE)
   print(paste("output directory is:", dir$output))
 
-  #dir$output_species <- file.path(dir$output, "species")
-  #dir.create(dir$output_species, recursive=TRUE, showWarnings = FALSE)
-  #dir$output_landscapes <- file.path(dir$output, "landscapes")
-  #dir.create(dir$output_landscapes, recursive=TRUE, showWarnings = FALSE)
   dir$output_plots <- file.path(dir$output, "plots")
   dir.create(dir$output_plots, recursive=TRUE, showWarnings = FALSE)
-  dir$output_val <- file.path(dir$output, "val")
-  #dir.create(dir$output_val, recursive=TRUE, showWarnings = FALSE)
 
   return(dir)
 }

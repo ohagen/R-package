@@ -170,7 +170,7 @@ verify_config <- function(config) {
   for(category in internal_categories) {
     presence <- names(reference[["gen3sis"]][[category]]) %in%  names(config[["gen3sis"]][[category]])
     if( !all( presence ) ) {
-      missing_settings <- append(missing_settings, names(reference[["gen3sis"]][[category]])[presence])
+      missing_settings <- append(missing_settings, names(reference[["gen3sis"]][[category]])[!presence])
     }
   }
   if(length(missing_settings)){

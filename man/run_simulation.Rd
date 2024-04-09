@@ -31,7 +31,7 @@ If a number "x", start at time-step x (e.g. timestep_restartstart=6)}
 If save_state=NA (default), do not save any internal state of the simulation.
 If save_state="all", save all time-step.
 If save_state="last", saves only last time-step.
-If a vector, saves the desired time-steps (e.g. save_state=c(1,3,5))}
+If a numeric vector, saves the desired time-steps (e.g. save_state=c(1,3,5))}
 
 \item{call_observer}{call observer functions.
 If call_observer="all" (default), call all time-steps.

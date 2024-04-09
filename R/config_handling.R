@@ -59,8 +59,16 @@ prepare_directories <- function(config_file = NA,
   dir$input <- input_dir
 
   #output folders
-  if(is.na(config_file)[1]|is(config_file, "gen3sis_config")) {
-    config_name <- file.path("default_config", paste0(format(Sys.time(), "%Y%m%d%H%m"), "-", formatC(sample(1:9999,1), digits=4, flag="0")))
+  if (is(config_file, "gen3sis_config")) {
+    if (!is.character(config_file$gen3sis$general$config_name)) {
+      stop(
+        "The gen3sis$general$config_name variable needs to be defined ",
+        "in the config object. It should be a string that will be used ",
+        "as the name of the subdirectory where the simulation outputs ",
+        "will be stored."
+      )
+    }
+    config_name <- config_file$gen3sis$general$config_name
   } else {
     config_name <- tools::file_path_sans_ext(basename(config_file))
   }
@@ -122,6 +130,13 @@ populate_config <- function(config, config_file) {
   for ( category in internal_categories) {
     config[["gen3sis"]][[category]] <- populate_settings_list(config[["gen3sis"]][[category]], user_config_env)
   }
+  # Populate config_name variable from file name if it has not been
+  # set yet
+  if (is.null(config$gen3sis$general$config_name)) {
+    config_name <- tools::file_path_sans_ext(basename(config_file))
+    config$gen3sis$general$config_name <- config_name
+  }
+
   user_settings <- ls(user_config_env)
   presence <- rep(FALSE, length(user_settings))
   for (category in internal_categories){
@@ -208,7 +223,8 @@ create_empty_config <- function(){
                                               "end_of_timestep_observer" = function(...){},
                                               "trait_names" = list(),
                                               "environmental_ranges" = list(),
-                                              "verbose" = FALSE
+                                              "verbose" = FALSE,
+                                              "config_name" = NULL
                                               ),
                             "initialization" = list( "initial_abundance" = NULL,
                                                      "create_ancestor_species" = NULL
